@@ -37,8 +37,8 @@
 	</licenses>
 
 	<developers>
-		<!-- See https://imagej.net/Team -->
 		<developer>
+
 			<id>turekg</id>
 			<name>Gabriella Turek</name>
 			<url>https://github.com/turekg</url>
@@ -65,7 +65,6 @@
 			<archive>http://forum.image.sc/tags/imagej/</archive>
 		</mailingList>
 	</mailingLists>
-
 
 	<scm>
 		<connection>scm:git:git://github.com/imagej/imagej-opencv/</connection>
