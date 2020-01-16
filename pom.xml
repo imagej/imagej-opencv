@@ -77,7 +77,8 @@
 		<url>https://github.com/imagej/imagej-opencv/issues</url>
 	</issueManagement>
 	<ciManagement>
-		<system>None</system>
+  		<system>Travis CI</system>
+		  <url>https://travis-ci.org/imagej/imagej-opencv</url>
 	</ciManagement>
 
 	<properties>
