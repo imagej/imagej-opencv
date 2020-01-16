@@ -25,7 +25,8 @@
 		2019
 	</inceptionYear>
 	<organization>
-		<name>csbd</name>
+		<name>Max Planck Institute of Molecular Cell
+			Biology and Genetics</name>
 		<url>https://www.mpi-cbd.de</url>
 	</organization>
 	<licenses>
@@ -77,8 +78,8 @@
 		<url>https://github.com/imagej/imagej-opencv/issues</url>
 	</issueManagement>
 	<ciManagement>
-  		<system>Travis CI</system>
-		  <url>https://travis-ci.org/imagej/imagej-opencv</url>
+		<system>Travis CI</system>
+		<url>https://travis-ci.org/imagej/imagej-opencv</url>
 	</ciManagement>
 
 	<properties>
