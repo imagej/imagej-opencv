@@ -68,7 +68,7 @@
 	</issueManagement>
 	<ciManagement>
 		<system>Travis CI</system>
-		<url>https://travis-ci.org/imagej/imagej-opencv</url>
+		<url>https://travis-ci.com/imagej/imagej-opencv</url>
 	</ciManagement>
 
 	<properties>
