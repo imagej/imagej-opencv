@@ -62,12 +62,12 @@
 	<mailingLists>
 		<mailingList>
 			<name>Image.sc Forum</name>
-			<archive>http://forum.image.sc/tags/imagej/</archive>
+			<archive>https://forum.image.sc/tags/imagej/</archive>
 		</mailingList>
 	</mailingLists>
 
 	<scm>
-		<connection>scm:git:git://github.com/imagej/imagej-opencv/</connection>
+		<connection>scm:git://github.com/imagej/imagej-opencv/</connection>
 		<developerConnection>scm:git:git@github.com:imagej/imagej-opencv/</developerConnection>
 		<tag>HEAD</tag>
 		<url>https://github.com/imagej/imagej-opencv</url>
@@ -78,7 +78,7 @@
 	</issueManagement>
 	<ciManagement>
 		<system>Travis CI</system>
-		<url>https://travis-ci.org/imagej/imagej-opencv</url>
+		<url>https://travis-ci.com/imagej/imagej-opencv</url>
 	</ciManagement>
 
 	<properties>
