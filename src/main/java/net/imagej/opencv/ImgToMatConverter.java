@@ -13,19 +13,13 @@ import org.scijava.convert.Converter;
 import org.scijava.log.LogService;
 import org.scijava.plugin.Plugin;
 
-import net.imglib2.Cursor;
-import net.imglib2.IterableInterval;
-import net.imglib2.RandomAccess;
 import net.imglib2.RandomAccessibleInterval;
-import net.imglib2.img.array.ArrayImg;
 import net.imglib2.img.array.ArrayImgs;
-import net.imglib2.img.basictypeaccess.array.ByteArray;
-import net.imglib2.img.basictypeaccess.array.DoubleArray;
-import net.imglib2.img.basictypeaccess.array.FloatArray;
-import net.imglib2.img.basictypeaccess.array.IntArray;
-import net.imglib2.type.numeric.RealType;
+import net.imglib2.loops.LoopBuilder;
+import net.imglib2.type.Type;
 import net.imglib2.type.numeric.integer.ByteType;
 import net.imglib2.type.numeric.integer.IntType;
+import net.imglib2.type.numeric.integer.UnsignedByteType;
 import net.imglib2.type.numeric.real.DoubleType;
 import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.util.Intervals;
@@ -86,35 +80,20 @@ public class ImgToMatConverter extends AbstractConverter< RandomAccessibleInterv
 	 *             Supported types are {@link ByteType}, {@link DoubleType},
 	 *             {@link FloatType} and {@link IntType}
 	 */
+	@SuppressWarnings( "unchecked" )
 	public static < T > Mat toMat(
 			final RandomAccessibleInterval< T > image ) {
-		if (image.numDimensions() > 3)
-			throw new IllegalArgumentException( "Images with more than 3 dimensions are not supported yet");
+		if ( image.numDimensions() > 3 )
+			throw new IllegalArgumentException( "Images with more than 3 dimensions are not supported yet" );
 		final T type = Util.getTypeFromInterval( image );
-		if ( type instanceof ByteType ) {
-			@SuppressWarnings( "unchecked" )
-			final RandomAccessibleInterval< ByteType > typedImage =
-					( RandomAccessibleInterval< ByteType > ) image;
-			return matByte( typedImage );
+		if ( type instanceof UnsignedByteType ) {
+			return getUnsignedByteMat( ( RandomAccessibleInterval< UnsignedByteType > ) image );
+
 		}
-		if ( type instanceof IntType ) {
-			@SuppressWarnings( "unchecked" )
-			final RandomAccessibleInterval< IntType > typedImage =
-					( RandomAccessibleInterval< IntType > ) image;
-			return matInt( typedImage );
-		}
-		if ( type instanceof FloatType ) {
-			@SuppressWarnings( "unchecked" )
-			final RandomAccessibleInterval< FloatType > typedImage =
-					( RandomAccessibleInterval< FloatType > ) image;
-			return matFloat( typedImage );
-		}
-		if ( type instanceof DoubleType ) {
-			@SuppressWarnings( "unchecked" )
-			final RandomAccessibleInterval< DoubleType > typedImage =
-					( RandomAccessibleInterval< DoubleType > ) image;
-			return matDouble( typedImage );
-		}
+		if ( type instanceof ByteType ) { return getByteMat( ( RandomAccessibleInterval< ByteType > ) image ); }
+		if ( type instanceof IntType ) { return getIntMat( ( RandomAccessibleInterval< IntType > ) image ); }
+		if ( type instanceof FloatType ) { return getFloatMat( ( RandomAccessibleInterval< FloatType > ) image ); }
+		if ( type instanceof DoubleType ) { return getDoubleMat( ( RandomAccessibleInterval< DoubleType > ) image ); }
 		throw new IllegalArgumentException( "Unsupported image type: " + type.getClass().getName() );
 	}
 
@@ -125,11 +104,38 @@ public class ImgToMatConverter extends AbstractConverter< RandomAccessibleInterv
 	 *            The image which should be put into the Mat.
 	 * @return A Mat containing the data of the image.
 	 */
-	public static Mat matByte(
+	public static Mat getUnsignedByteMat(
+			final RandomAccessibleInterval< UnsignedByteType > image ) {
+		int[] shape = Intervals.dimensionsAsIntArray( image );
+		byte[] data = toUByteArray( image );
+		return createByteMat( shape, CvType.CV_8UC1, data );
+
+	}
+
+	/**
+	 * Creates an OpenCV Mat matrix containing data from the given byte image.
+	 * 
+	 * @param image
+	 *            The image which should be put into the Mat.
+	 * @return A Mat containing the data of the image.
+	 */
+	public static Mat getByteMat(
 			final RandomAccessibleInterval< ByteType > image ) {
-		int[] shape = getImageShape( image );
-		byte[] data = byteArray( image );
-		return new Mat( shape.length, shape, CvType.CV_8UC1, new BytePointer( data ) );
+		int[] shape = Intervals.dimensionsAsIntArray( image );
+		byte[] data = toByteArray( image );
+		return createByteMat( shape, CvType.CV_8SC1, data );
+	}
+
+	private static Mat createByteMat( final int[] shape, final int cvType, final byte[] data ) {
+		// We need to invert X and Y in order to get the right orientation.
+		if ( shape.length == 2 ) {
+			return new Mat( shape[ 1 ], shape[ 0 ], cvType, new BytePointer( data ) );
+		} else {
+			int[] reshape = shape.clone();
+			reshape[ 0 ] = shape[ 1 ];
+			reshape[ 1 ] = shape[ 0 ];
+			return new Mat( reshape.length, reshape, cvType, new BytePointer( data ) );
+		}
 	}
 
 	/**
@@ -139,11 +145,23 @@ public class ImgToMatConverter extends AbstractConverter< RandomAccessibleInterv
 	 *            The image which should be put into the Mat.
 	 * @return A Mat containing the data of the image.
 	 */
-	public static Mat matInt(
+	public static Mat getIntMat(
 			final RandomAccessibleInterval< IntType > image ) {
-		int[] shape = getImageShape( image );
-		int[] data = intArray( image );
-		return new Mat( shape.length, shape, CvType.CV_32SC1, new IntPointer( data ) );
+		int[] shape = Intervals.dimensionsAsIntArray( image );
+		int[] data = toIntArray( image );
+		return createIntMat( shape, data );
+	}
+
+	private static Mat createIntMat( final int[] shape, final int[] data ) {
+		// We need to invert X and Y in order to get the right orientation.
+		if ( shape.length == 2 ) {
+			return new Mat( shape[ 1 ], shape[ 0 ], CvType.CV_32SC1, new IntPointer( data ) );
+		} else {
+			int[] reshape = shape.clone();
+			reshape[ 0 ] = shape[ 1 ];
+			reshape[ 1 ] = shape[ 0 ];
+			return new Mat( reshape.length, reshape, CvType.CV_32SC1, new IntPointer( data ) );
+		}
 	}
 
 	/**
@@ -153,11 +171,23 @@ public class ImgToMatConverter extends AbstractConverter< RandomAccessibleInterv
 	 *            The image which should be put into the Mat.
 	 * @return A Mat containing the data of the image.
 	 */
-	public static Mat matFloat(
+	public static Mat getFloatMat(
 			final RandomAccessibleInterval< FloatType > image ) {
-		int[] shape = getImageShape( image );
-		float[] data = floatArray( image );
-		return new Mat( shape.length, shape, CvType.CV_32FC1, new FloatPointer( data ) );
+		int[] shape = Intervals.dimensionsAsIntArray( image );
+		float[] data = toFloatArray( image );
+		return createFloatMat( shape, data );
+	}
+
+	private static Mat createFloatMat( final int[] shape, final float[] data ) {
+		// We need to invert X and Y in order to get the right orientation.
+		if ( shape.length == 2 ) {
+			return new Mat( shape[ 1 ], shape[ 0 ], CvType.CV_32FC1, new FloatPointer( data ) );
+		} else {
+			int[] reshape = shape.clone();
+			reshape[ 0 ] = shape[ 1 ];
+			reshape[ 1 ] = shape[ 0 ];
+			return new Mat( reshape.length, reshape, CvType.CV_32FC1, new FloatPointer( data ) );
+		}
 	}
 
 	/**
@@ -167,135 +197,64 @@ public class ImgToMatConverter extends AbstractConverter< RandomAccessibleInterv
 	 *            The image which should be put into the Mat.
 	 * @return A Mat containing the data of the image.
 	 */
-	public static Mat matDouble(
+	public static Mat getDoubleMat(
 			final RandomAccessibleInterval< DoubleType > image ) {
-		int[] shape = getImageShape( image );
-		double[] data = doubleArray( image );
-		return new Mat( shape.length, shape, CvType.CV_64FC1, new DoublePointer( data ) );
+		int[] shape = Intervals.dimensionsAsIntArray( image );
+		double[] data = toDoubleArray( image );
+		return createDoubleMat( shape, data );
 	}
 
-	public static byte[] byteArray(
-			final RandomAccessibleInterval< ByteType > image ) {
-		final byte[] array = extractByteArray( image );
-		return array == null ? createByteArray( image ) : array;
-	}
-
-	public static int[] intArray(
-			final RandomAccessibleInterval< IntType > image ) {
-		final int[] array = extractIntArray( image );
-		return array == null ? createIntArray( image ) : array;
-	}
-
-	public static float[] floatArray(
-			final RandomAccessibleInterval< FloatType > image ) {
-		final float[] array = extractFloatArray( image );
-		return array == null ? createFloatArray( image ) : array;
-	}
-
-	public static double[] doubleArray(
-			final RandomAccessibleInterval< DoubleType > image ) {
-		final double[] array = extractDoubleArray( image );
-		return array == null ? createDoubleArray( image ) : array;
-	}
-
-	public static byte[] createByteArray(
-			final RandomAccessibleInterval< ByteType > image ) {
-		final long[] dims = Intervals.dimensionsAsLongArray( image );
-		final ArrayImg< ByteType, ByteArray > dest = ArrayImgs.bytes( dims );
-		copy( image, dest );
-		return dest.update( null ).getCurrentStorageArray();
-	}
-
-	public static int[] createIntArray(
-			final RandomAccessibleInterval< IntType > image ) {
-		final long[] dims = Intervals.dimensionsAsLongArray( image );
-		final ArrayImg< IntType, IntArray > dest = ArrayImgs.ints( dims );
-		copy( image, dest );
-		return dest.update( null ).getCurrentStorageArray();
-	}
-
-	public static float[] createFloatArray(
-			final RandomAccessibleInterval< FloatType > image ) {
-		final long[] dims = Intervals.dimensionsAsLongArray( image );
-		final ArrayImg< FloatType, FloatArray > dest = ArrayImgs.floats( dims );
-		copy( image, dest );
-		return dest.update( null ).getCurrentStorageArray();
-	}
-
-	public static double[] createDoubleArray(
-			final RandomAccessibleInterval< DoubleType > image ) {
-		final long[] dims = Intervals.dimensionsAsLongArray( image );
-		final ArrayImg< DoubleType, DoubleArray > dest = ArrayImgs.doubles( dims );
-		copy( image, dest );
-		return dest.update( null ).getCurrentStorageArray();
-	}
-
-	public static byte[] extractByteArray(
-			final RandomAccessibleInterval< ByteType > image ) {
-		if ( !( image instanceof ArrayImg ) ) return null;
-		@SuppressWarnings( "unchecked" )
-		final ArrayImg< ByteType, ? > arrayImg = ( ArrayImg< ByteType, ? > ) image;
-		final Object dataAccess = arrayImg.update( null );
-		return dataAccess instanceof ByteArray ? //
-				( ( ByteArray ) dataAccess ).getCurrentStorageArray() : null;
-	}
-
-	public static int[] extractIntArray(
-			final RandomAccessibleInterval< IntType > image ) {
-		if ( !( image instanceof ArrayImg ) ) return null;
-		@SuppressWarnings( "unchecked" )
-		final ArrayImg< IntType, ? > arrayImg = ( ArrayImg< IntType, ? > ) image;
-		final Object dataAccess = arrayImg.update( null );
-		return dataAccess instanceof IntArray ? //
-				( ( IntArray ) dataAccess ).getCurrentStorageArray() : null;
-	}
-
-	public static float[] extractFloatArray(
-			final RandomAccessibleInterval< FloatType > image ) {
-		if ( !( image instanceof ArrayImg ) ) return null;
-		@SuppressWarnings( "unchecked" )
-		final ArrayImg< FloatType, ? > arrayImg = ( ArrayImg< FloatType, ? > ) image;
-		final Object dataAccess = arrayImg.update( null );
-		return dataAccess instanceof FloatArray ? //
-				( ( FloatArray ) dataAccess ).getCurrentStorageArray() : null;
-	}
-
-	public static double[] extractDoubleArray(
-			final RandomAccessibleInterval< DoubleType > image ) {
-		if ( !( image instanceof ArrayImg ) ) return null;
-		@SuppressWarnings( "unchecked" )
-		final ArrayImg< DoubleType, ? > arrayImg = ( ArrayImg< DoubleType, ? > ) image;
-		final Object dataAccess = arrayImg.update( null );
-		return dataAccess instanceof DoubleArray ? //
-				( ( DoubleArray ) dataAccess ).getCurrentStorageArray() : null;
-	}
-
-	public static < T extends RealType< T > > void copy(
-			final RandomAccessibleInterval< T > source,
-			final IterableInterval< T > dest ) {
-		final RandomAccess< T > sourceAccess = source.randomAccess();
-		final Cursor< T > destCursor = dest.localizingCursor();
-		while ( destCursor.hasNext() ) {
-			destCursor.fwd();
-			sourceAccess.setPosition( destCursor );
-			destCursor.get().set( sourceAccess.get() );
+	private static Mat createDoubleMat( final int[] shape, final double[] data ) {
+		// We need to invert X and Y in order to get the right orientation.
+		if ( shape.length == 2 ) {
+			return new Mat( shape[ 1 ], shape[ 0 ], CvType.CV_32FC1, new DoublePointer( data ) );
+		} else {
+			int[] reshape = shape.clone();
+			reshape[ 0 ] = shape[ 1 ];
+			reshape[ 1 ] = shape[ 0 ];
+			return new Mat( reshape.length, reshape, CvType.CV_64FC1, new DoublePointer( data ) );
 		}
 	}
 
-	public static int[] getImageShape( final RandomAccessibleInterval< ? > image ) {
-		int n = image.numDimensions();
-		int[] shape = new int[ n ];
-		for ( int i = 0; i < n; i++ )
-			shape[ i ] = ( int ) image.dimension( i );
-		return shape;
+	public static byte[] toUByteArray( RandomAccessibleInterval< UnsignedByteType > image ) {
+		byte[] outputArray = new byte[ ( int ) Intervals.numElements( image ) ];
+		long[] shape = Intervals.dimensionsAsLongArray( image );
+		copyFromTo( image, ArrayImgs.unsignedBytes( outputArray, shape ) );
+		return outputArray;
 	}
 
-	public static long[] getMatShape( Mat mat ) {
-		final long[] dims = new long[ mat.dims() ];
-		for ( int i = 0; i < mat.dims(); i++ ) {
-			dims[ i ] = mat.size( i );
-		}
-		return dims;
+	public static byte[] toByteArray( RandomAccessibleInterval< ByteType > image ) {
+		byte[] outputArray = new byte[ ( int ) Intervals.numElements( image ) ];
+		long[] shape = Intervals.dimensionsAsLongArray( image );
+		copyFromTo( image, ArrayImgs.bytes( outputArray, shape ) );
+		return outputArray;
+	}
+
+	public static int[] toIntArray( RandomAccessibleInterval< IntType > image ) {
+		int[] outputArray = new int[ ( int ) Intervals.numElements( image ) ];
+		long[] shape = Intervals.dimensionsAsLongArray( image );
+		copyFromTo( image, ArrayImgs.ints( outputArray, shape ) );
+		return outputArray;
+	}
+
+	public static float[] toFloatArray( RandomAccessibleInterval< FloatType > image ) {
+		float[] outputArray = new float[ ( int ) Intervals.numElements( image ) ];
+		long[] shape = Intervals.dimensionsAsLongArray( image );
+		copyFromTo( image, ArrayImgs.floats( outputArray, shape ) );
+		return outputArray;
+	}
+
+	public static double[] toDoubleArray( RandomAccessibleInterval< DoubleType > image ) {
+		double[] outputArray = new double[ ( int ) Intervals.numElements( image ) ];
+		long[] shape = Intervals.dimensionsAsLongArray( image );
+		copyFromTo( image, ArrayImgs.doubles( outputArray, shape ) );
+		return outputArray;
+	}
+
+	private static < T extends Type< T > > void copyFromTo(
+			RandomAccessibleInterval< T > source,
+			RandomAccessibleInterval< T > destination ) {
+		LoopBuilder.setImages( source, destination ).forEachPixel( ( i, o ) -> o.set( i ) );
 	}
 
 }
