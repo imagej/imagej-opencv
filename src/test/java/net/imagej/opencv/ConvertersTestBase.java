@@ -23,13 +23,14 @@ import net.imglib2.RandomAccessibleInterval;
 public abstract class ConvertersTestBase {
 
 	protected static final String TEST_DIR = System.getProperty( "java.io.tmpdir" ) + File.separator + "opencv-tests";
+	//protected static final String TEST_DIR = "/Users/turek/Desktop/test";
 	protected static final String input = TEST_DIR + File.separator + "input.tif";
 	protected static final String mat2img = TEST_DIR + File.separator + "mat2img.tif";
 	protected static final String img2mat = TEST_DIR + File.separator + "img2mat.tif";
 	protected static final String fullCircleFromMat = TEST_DIR + File.separator + "fullCircleFromMat.tif";
 	protected static final String fullCircleFromImg = TEST_DIR + File.separator + "fullCircleFromImg.tif";
 	protected static SCIFIO scifio;
-	protected static boolean DEBUG = true;
+	protected static boolean DEBUG = false;
 
 	@BeforeClass
 	public static void setup() {
