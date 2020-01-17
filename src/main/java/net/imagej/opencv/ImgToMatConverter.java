@@ -207,7 +207,7 @@ public class ImgToMatConverter extends AbstractConverter< RandomAccessibleInterv
 	private static Mat createDoubleMat( final int[] shape, final double[] data ) {
 		// We need to invert X and Y in order to get the right orientation.
 		if ( shape.length == 2 ) {
-			return new Mat( shape[ 1 ], shape[ 0 ], CvType.CV_32FC1, new DoublePointer( data ) );
+			return new Mat( shape[ 1 ], shape[ 0 ], CvType.CV_64FC1, new DoublePointer( data ) );
 		} else {
 			int[] reshape = shape.clone();
 			reshape[ 0 ] = shape[ 1 ];

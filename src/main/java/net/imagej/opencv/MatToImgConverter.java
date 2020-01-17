@@ -72,7 +72,7 @@ public class MatToImgConverter extends AbstractConverter< Mat, Img > {
 		case CvType.CV_32F:
 			return toFloatImg( mat );
 		case CvType.CV_64F:
-			return tpDoubleImg( mat );
+			return toDoubleImg( mat );
 		default:
 			throw new UnsupportedOperationException( "Unsupported CvType value: " + type );
 		}
@@ -97,8 +97,8 @@ public class MatToImgConverter extends AbstractConverter< Mat, Img > {
 	 * @return An image containing the data of the Mat.
 	 */
 	public static RandomAccessibleInterval< UnsignedByteType > toUnsignedByteImg( final Mat mat ) {
-		final byte[] out = toByteArray( mat );
-		final long[] dims = getMatShape( mat );
+		byte[] out = toByteArray( mat );
+		long[] dims = getMatShape( mat );
 		long[] reshaped = dims.clone();   
 		reshaped[0] = dims[1];
 		reshaped[1] = dims[0];
@@ -114,8 +114,8 @@ public class MatToImgConverter extends AbstractConverter< Mat, Img > {
 	 * @return An image containing the data of the Mat.
 	 */
 	public static RandomAccessibleInterval< ByteType > toByteImg( final Mat mat ) {
-		final byte[] out = toByteArray( mat );
-		final long[] dims = getMatShape( mat );
+		byte[] out = toByteArray( mat );
+		long[] dims = getMatShape( mat );
 		long[] reshaped = dims.clone();   
 		reshaped[0] = dims[1];
 		reshaped[1] = dims[0];
@@ -131,8 +131,8 @@ public class MatToImgConverter extends AbstractConverter< Mat, Img > {
 	 * @return An image containing the data of the Mat.
 	 */
 	public static RandomAccessibleInterval< IntType > toIntImg( final Mat mat ) {
-		final int[] out = toIntArray( mat );
-		final long[] dims = getMatShape( mat );
+		int[] out = toIntArray( mat );
+		long[] dims = getMatShape( mat );
 		long[] reshaped = dims.clone();   
 		reshaped[0] = dims[1];
 		reshaped[1] = dims[0];
@@ -149,11 +149,11 @@ public class MatToImgConverter extends AbstractConverter< Mat, Img > {
 	 */
 	public static RandomAccessibleInterval< FloatType > toFloatImg( final Mat mat ) {
 		float[] out = toFloatArray( mat );
-		final long[] dims = getMatShape( mat );
+		long[] dims = getMatShape( mat );
 		long[] reshaped = dims.clone();   
 		reshaped[0] = dims[1];
 		reshaped[1] = dims[0];
-		return ArrayImgs.floats( out, dims );
+		return ArrayImgs.floats( out, reshaped );
 	}
 
 	/**
@@ -164,23 +164,23 @@ public class MatToImgConverter extends AbstractConverter< Mat, Img > {
 	 *            Mat.
 	 * @return An image containing the data of the Mat.
 	 */
-	public static RandomAccessibleInterval< DoubleType > tpDoubleImg( Mat mat ) {
-		final double[] out = toDoubleArray( mat );
-		final long[] dims = getMatShape( mat );
+	public static RandomAccessibleInterval< DoubleType > toDoubleImg( Mat mat ) {
+		double[] out = toDoubleArray( mat );
+		long[] dims = getMatShape( mat );
 		long[] reshaped = dims.clone();   
 		reshaped[0] = dims[1];
 		reshaped[1] = dims[0];
-		return ArrayImgs.doubles( out, dims );
+		return ArrayImgs.doubles( out, reshaped );
 	}
 
 	public static byte[] toByteArray( final Mat mat ) {
-		final byte[] out = new byte[ ( int ) mat.arraySize() ];
+		byte[] out = new byte[ ( int ) mat.arraySize() ];
 		mat.arrayData().get( out );
 		return out;
 	}
 
 	public static int[] toIntArray( final Mat mat ) {
-		final byte[] bytes = toByteArray( mat );
+		byte[] bytes = toByteArray( mat );
 		IntBuffer intBuf = ByteBuffer.wrap( bytes ).order( ByteOrder.nativeOrder() ).asIntBuffer();
 		int[] out = new int[ intBuf.remaining() ];
 		intBuf.get( out );
@@ -188,7 +188,7 @@ public class MatToImgConverter extends AbstractConverter< Mat, Img > {
 	}
 
 	public static float[] toFloatArray( final Mat mat ) {
-		final byte[] bytes = toByteArray( mat );
+		byte[] bytes = toByteArray( mat );
 		FloatBuffer floatBuf = ByteBuffer.wrap( bytes ).order( ByteOrder.nativeOrder() ).asFloatBuffer();
 		float[] out = new float[ floatBuf.remaining() ];
 		floatBuf.get( out );
@@ -196,7 +196,7 @@ public class MatToImgConverter extends AbstractConverter< Mat, Img > {
 	}
 
 	public static double[] toDoubleArray( Mat mat ) {
-		final byte[] bytes = toByteArray( mat );
+		byte[] bytes = toByteArray( mat );
 		DoubleBuffer doubleBuf = ByteBuffer.wrap( bytes ).order( ByteOrder.nativeOrder() ).asDoubleBuffer();
 		double[] out = new double[ doubleBuf.remaining() ];
 		doubleBuf.get( out );
@@ -204,7 +204,7 @@ public class MatToImgConverter extends AbstractConverter< Mat, Img > {
 	}
 
 	public static long[] getMatShape( Mat mat ) {
-		final long[] dims = new long[ mat.dims() ];
+		long[] dims = new long[ mat.dims() ];
 		for ( int i = 0; i < mat.dims(); i++ ) {
 			dims[ i ] = mat.size( i );
 		}

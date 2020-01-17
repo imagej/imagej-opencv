@@ -29,7 +29,7 @@ public class ByteImageConvertersTest extends ConvertersTestBase {
 	@BeforeClass
 	public static void createTestImage() {
 
-		ArrayImg< UnsignedByteType, ByteArray > img = createSmallRectangularImage();
+		ArrayImg< UnsignedByteType, ByteArray > img = createLargeRectangularImage();
 		saveImg( img, input );
 	}
 
@@ -93,14 +93,14 @@ public class ByteImageConvertersTest extends ConvertersTestBase {
 			fail( "Couldn't load image: " + input );
 
 		RandomAccessibleInterval< UnsignedByteType > cvImg = ( RandomAccessibleInterval< UnsignedByteType > ) MatToImgConverter.toImg( mat );
-		Mat cvMat = ImgToMatConverter.getUnsignedByteMat( cvImg );
+		Mat cvMat = ImgToMatConverter.toMat( cvImg );
 		opencv_imgcodecs.imwrite( fullCircleFromMat, cvMat );
 		checkData( cvMat, mat );
 	}
 
 	@SuppressWarnings( "unchecked" )
 	@Test
-	public void testIntFullCircleConversionFromIJ() throws IOException {
+	public void testFullCircleConversionFromIJ() throws IOException {
 
 		Dataset dataset = getScifio().datasetIO().open( input );
 		RandomAccessibleInterval< ByteType > image =
@@ -129,20 +129,6 @@ public class ByteImageConvertersTest extends ConvertersTestBase {
 	}
 
 	/**
-	 * Creates a large (1024 x 1024) striped image
-	 */
-	private static ArrayImg< UnsignedByteType, ByteArray > createLargeSquareImage() {
-		ArrayImg< UnsignedByteType, ByteArray > img = ArrayImgs.unsignedBytes( 1024, 1024 );
-		for ( int i = 0; i < 3; i++ ) {
-			long[] xmin = new long[] { 199 + i * 200, 0 };
-			long[] xmax = new long[] { 299 + i * 200, 1023 };
-			IntervalView< UnsignedByteType > iview = Views.interval( img, xmin, xmax );
-			iview.forEach( pixel -> pixel.set( ( byte ) 255 ) );
-		}
-		return img;
-	}
-
-	/**
 	 * Creates a large rectangular (1024 x 512) striped image
 	 */
 	private static ArrayImg< UnsignedByteType, ByteArray > createLargeRectangularImage() {
@@ -150,20 +136,6 @@ public class ByteImageConvertersTest extends ConvertersTestBase {
 		for ( int i = 0; i < 3; i++ ) {
 			long[] xmin = new long[] { 199 + i * 200, 0 };
 			long[] xmax = new long[] { 299 + i * 200, 511 };
-			IntervalView< UnsignedByteType > iview = Views.interval( img, xmin, xmax );
-			iview.forEach( pixel -> pixel.set( ( byte ) 255 ) );
-		}
-		return img;
-	}
-
-	/**
-	 * Creates a small (7 x 4) rectangular striped image
-	 */
-	private static ArrayImg< UnsignedByteType, ByteArray > createSmallRectangularImage() {
-		ArrayImg< UnsignedByteType, ByteArray > img = ArrayImgs.unsignedBytes( 7, 4 );
-		for ( int i = 0; i < 2; i++ ) {
-			long[] xmin = new long[] { 1 + i * 3, 0 };
-			long[] xmax = new long[] { 2 + i * 3, 3 };
 			IntervalView< UnsignedByteType > iview = Views.interval( img, xmin, xmax );
 			iview.forEach( pixel -> pixel.set( ( byte ) 255 ) );
 		}
