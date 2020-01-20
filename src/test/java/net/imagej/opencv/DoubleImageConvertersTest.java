@@ -33,6 +33,7 @@ public class DoubleImageConvertersTest extends ConvertersTestBase {
 
 	@BeforeClass
 	public static void createTestImage() {
+
 		inputImg = createLargeRectangularImage();
 		saveImg( inputImg, input );
 	}

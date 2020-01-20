@@ -26,8 +26,9 @@ import net.imglib2.util.Intervals;
 import net.imglib2.util.Util;
 
 /**
+ * Only 2 dimensional, 1 channel images are supported here.
+ * For 3 dimensions see {@link ImgToMatVectorConverter}
  * @author G.Turek for OpenCV version 4.1.2
- *         Only 3 dimensional, 1 channel images are supported for the moment
  */
 
 @SuppressWarnings( "rawtypes" )
@@ -83,8 +84,8 @@ public class ImgToMatConverter extends AbstractConverter< RandomAccessibleInterv
 	@SuppressWarnings( "unchecked" )
 	public static < T > Mat toMat(
 			final RandomAccessibleInterval< T > image ) {
-		if ( image.numDimensions() > 3 )
-			throw new IllegalArgumentException( "Images with more than 3 dimensions are not supported yet" );
+		if ( image.numDimensions() > 2 )
+			throw new IllegalArgumentException( "Images with more than 2 dimensions are not supported here, use ImgToMatVectorConverter" );
 		final T type = Util.getTypeFromInterval( image );
 		if ( type instanceof UnsignedByteType ) {
 			return getUnsignedByteMat( ( RandomAccessibleInterval< UnsignedByteType > ) image );

@@ -25,8 +25,9 @@ import net.imglib2.type.numeric.real.DoubleType;
 import net.imglib2.type.numeric.real.FloatType;
 
 /**
+ * Only 1 channel images are supported for the moment.
+ * 
  * @author G.Turek for OpenCV version 4.1.2
- *         Only 3 dimensional, 1 channel images are supported for the moment
  */
 
 @SuppressWarnings( "rawtypes" )
@@ -89,7 +90,8 @@ public class MatToImgConverter extends AbstractConverter< Mat, Img > {
 	}
 
 	/**
-	 * Creates an image of type {@link UnsignedByteType} containing the data of an
+	 * Creates an image of type {@link UnsignedByteType} containing the data of
+	 * an
 	 * OpenCV Mat matrix with the data type {@link CvType#CV_8UC1}.
 	 * 
 	 * @param matrix
@@ -99,12 +101,12 @@ public class MatToImgConverter extends AbstractConverter< Mat, Img > {
 	public static RandomAccessibleInterval< UnsignedByteType > toUnsignedByteImg( final Mat mat ) {
 		byte[] out = toByteArray( mat );
 		long[] dims = getMatShape( mat );
-		long[] reshaped = dims.clone();   
-		reshaped[0] = dims[1];
-		reshaped[1] = dims[0];
+		long[] reshaped = dims.clone();
+		reshaped[ 0 ] = dims[ 1 ];
+		reshaped[ 1 ] = dims[ 0 ];
 		return ArrayImgs.unsignedBytes( out, reshaped );
 	}
-	
+
 	/**
 	 * Creates an image of type {@link ByteType} containing the data of an
 	 * OpenCV Mat matrix with the data type {@link CvType#CV_8SC1}.
@@ -116,9 +118,9 @@ public class MatToImgConverter extends AbstractConverter< Mat, Img > {
 	public static RandomAccessibleInterval< ByteType > toByteImg( final Mat mat ) {
 		byte[] out = toByteArray( mat );
 		long[] dims = getMatShape( mat );
-		long[] reshaped = dims.clone();   
-		reshaped[0] = dims[1];
-		reshaped[1] = dims[0];
+		long[] reshaped = dims.clone();
+		reshaped[ 0 ] = dims[ 1 ];
+		reshaped[ 1 ] = dims[ 0 ];
 		return ArrayImgs.bytes( out, reshaped );
 	}
 
@@ -133,9 +135,9 @@ public class MatToImgConverter extends AbstractConverter< Mat, Img > {
 	public static RandomAccessibleInterval< IntType > toIntImg( final Mat mat ) {
 		int[] out = toIntArray( mat );
 		long[] dims = getMatShape( mat );
-		long[] reshaped = dims.clone();   
-		reshaped[0] = dims[1];
-		reshaped[1] = dims[0];
+		long[] reshaped = dims.clone();
+		reshaped[ 0 ] = dims[ 1 ];
+		reshaped[ 1 ] = dims[ 0 ];
 		return ArrayImgs.ints( out, reshaped );
 	}
 
@@ -150,9 +152,9 @@ public class MatToImgConverter extends AbstractConverter< Mat, Img > {
 	public static RandomAccessibleInterval< FloatType > toFloatImg( final Mat mat ) {
 		float[] out = toFloatArray( mat );
 		long[] dims = getMatShape( mat );
-		long[] reshaped = dims.clone();   
-		reshaped[0] = dims[1];
-		reshaped[1] = dims[0];
+		long[] reshaped = dims.clone();
+		reshaped[ 0 ] = dims[ 1 ];
+		reshaped[ 1 ] = dims[ 0 ];
 		return ArrayImgs.floats( out, reshaped );
 	}
 
@@ -167,9 +169,9 @@ public class MatToImgConverter extends AbstractConverter< Mat, Img > {
 	public static RandomAccessibleInterval< DoubleType > toDoubleImg( Mat mat ) {
 		double[] out = toDoubleArray( mat );
 		long[] dims = getMatShape( mat );
-		long[] reshaped = dims.clone();   
-		reshaped[0] = dims[1];
-		reshaped[1] = dims[0];
+		long[] reshaped = dims.clone();
+		reshaped[ 0 ] = dims[ 1 ];
+		reshaped[ 1 ] = dims[ 0 ];
 		return ArrayImgs.doubles( out, reshaped );
 	}
 

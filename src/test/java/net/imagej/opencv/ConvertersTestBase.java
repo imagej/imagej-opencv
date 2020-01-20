@@ -22,8 +22,7 @@ import net.imglib2.RandomAccessibleInterval;
 
 public abstract class ConvertersTestBase {
 
-	protected static final String TEST_DIR = System.getProperty( "java.io.tmpdir" ) + File.separator + "opencv-tests";
-	//protected static final String TEST_DIR = "/Users/turek/Desktop/test";
+	protected static String TEST_DIR = System.getProperty( "java.io.tmpdir" ) + File.separator + "opencv-tests";
 	protected static final String input = TEST_DIR + File.separator + "input.tif";
 	protected static final String mat2img = TEST_DIR + File.separator + "mat2img.tif";
 	protected static final String img2mat = TEST_DIR + File.separator + "img2mat.tif";
@@ -34,6 +33,10 @@ public abstract class ConvertersTestBase {
 
 	@BeforeClass
 	public static void setup() {
+
+		if ( DEBUG )
+			TEST_DIR = "/Users/turek/Desktop/test";
+		
 		File testDir = new File( TEST_DIR );
 		try {
 			if ( testDir.exists() ) {
