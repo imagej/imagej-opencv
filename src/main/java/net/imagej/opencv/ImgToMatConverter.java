@@ -55,7 +55,6 @@ public class ImgToMatConverter extends AbstractConverter< RandomAccessibleInterv
 	public < T > T convert( Object o, Class< T > type ) {
 		RandomAccessibleInterval< T > imp = ( RandomAccessibleInterval< T > ) o;
 		return ( T ) toMat( imp );
-
 	}
 
 	@Override

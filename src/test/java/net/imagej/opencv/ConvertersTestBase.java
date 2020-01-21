@@ -10,9 +10,7 @@ import java.nio.file.attribute.FileAttribute;
 
 import org.apache.commons.io.FileUtils;
 import org.bytedeco.opencv.opencv_core.Mat;
-import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.opencv.core.CvType;
 
 import io.scif.SCIFIO;
@@ -22,7 +20,8 @@ import net.imglib2.RandomAccessibleInterval;
 
 public abstract class ConvertersTestBase {
 
-	protected static String TEST_DIR = System.getProperty( "java.io.tmpdir" ) + File.separator + "opencv-tests";
+	//protected static final String TEST_DIR = System.getProperty( "java.io.tmpdir" ) + File.separator + "test";
+	protected static final String TEST_DIR = System.getProperty( "user.dir" ) + File.separator + "test";
 	protected static final String input = TEST_DIR + File.separator + "input.tif";
 	protected static final String mat2img = TEST_DIR + File.separator + "mat2img.tif";
 	protected static final String img2mat = TEST_DIR + File.separator + "img2mat.tif";
@@ -31,28 +30,18 @@ public abstract class ConvertersTestBase {
 	protected static SCIFIO scifio;
 	protected static boolean DEBUG = false;
 
-	@BeforeClass
-	public static void setup() {
+	protected static void setup() {
 
-		if ( DEBUG )
-			TEST_DIR = "/Users/turek/Desktop/test";
-		
 		File testDir = new File( TEST_DIR );
+		
 		try {
+			//Cleanup before starting
 			if ( testDir.exists() ) {
-				FileUtils.cleanDirectory( testDir );
-			} else {
-				Files.createDirectory( testDir.toPath(), new FileAttribute< ? >[ 0 ] );
+				FileUtils.forceDelete( new File( TEST_DIR ) );
 			}
+			Files.createDirectory( testDir.toPath(), new FileAttribute< ? >[ 0 ] );
 		} catch ( IOException e ) {
 			fail( e.getMessage() );
-		}
-	}
-
-	@AfterClass
-	public static void cleanup() throws IOException {
-		if ( !DEBUG ) {
-			FileUtils.forceDelete( new File( TEST_DIR ) );
 		}
 	}
 

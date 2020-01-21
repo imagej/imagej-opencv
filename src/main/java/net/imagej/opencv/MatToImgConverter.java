@@ -53,11 +53,11 @@ public class MatToImgConverter extends AbstractConverter< Mat, Img > {
 	@Override
 	public < T > T convert( Object o, Class< T > type ) {
 		Mat imp = ( Mat ) o;
-		return ( T ) toImg( imp );
+		return ( T ) convert( imp );
 
 	}
 
-	public static RandomAccessibleInterval< ? > toImg( Mat mat ) {
+	public static RandomAccessibleInterval< ? > convert( Mat mat ) {
 		int type = mat.depth();
 
 		if ( mat.channels() > 1 )

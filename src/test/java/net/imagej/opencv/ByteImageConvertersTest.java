@@ -27,8 +27,10 @@ import net.imglib2.view.Views;
 public class ByteImageConvertersTest extends ConvertersTestBase {
 
 	@BeforeClass
-	public static void createTestImage() {
+	public static void init() {
 
+		setup();
+		
 		ArrayImg< UnsignedByteType, ByteArray > img = createLargeRectangularImage();
 		saveImg( img, input );
 	}
@@ -55,7 +57,7 @@ public class ByteImageConvertersTest extends ConvertersTestBase {
 		Mat mat = imread( input, opencv_imgcodecs.IMREAD_GRAYSCALE );
 		if ( mat.empty() )
 			fail( "Couldn't load image: " + input );
-		RandomAccessibleInterval< ByteType > convertedMat = ( RandomAccessibleInterval< ByteType > ) MatToImgConverter.toImg( mat );
+		RandomAccessibleInterval< ByteType > convertedMat = ( RandomAccessibleInterval< ByteType > ) new MatToImgConverter().convert( mat, RandomAccessibleInterval.class );
 		saveImg( convertedMat, mat2img );
 
 		//Read image with ImageJ
@@ -72,7 +74,7 @@ public class ByteImageConvertersTest extends ConvertersTestBase {
 	public void testImgToMatConversion() throws IOException {
 		//Read image with ImageJ and convert to openCV
 		Dataset dataset = getScifio().datasetIO().open( input );
-		Mat convertedImg = ImgToMatConverter.toMat( ( RandomAccessibleInterval< UnsignedByteType > ) dataset.getImgPlus().getImg() );
+		Mat convertedImg = new ImgToMatConverter().convert( ( RandomAccessibleInterval< UnsignedByteType > ) dataset.getImgPlus().getImg(), Mat.class );
 		opencv_imgcodecs.imwrite( img2mat, convertedImg );
 
 		//Read image with OpenCV
@@ -92,8 +94,8 @@ public class ByteImageConvertersTest extends ConvertersTestBase {
 		if ( mat.empty() )
 			fail( "Couldn't load image: " + input );
 
-		RandomAccessibleInterval< UnsignedByteType > cvImg = ( RandomAccessibleInterval< UnsignedByteType > ) MatToImgConverter.toImg( mat );
-		Mat cvMat = ImgToMatConverter.toMat( cvImg );
+		RandomAccessibleInterval< UnsignedByteType > cvImg = ( RandomAccessibleInterval< UnsignedByteType > ) MatToImgConverter.convert( mat );
+		Mat cvMat = new ImgToMatConverter().convert( cvImg, Mat.class );
 		opencv_imgcodecs.imwrite( fullCircleFromMat, cvMat );
 		checkData( cvMat, mat );
 	}
@@ -105,8 +107,8 @@ public class ByteImageConvertersTest extends ConvertersTestBase {
 		Dataset dataset = getScifio().datasetIO().open( input );
 		RandomAccessibleInterval< ByteType > image =
 				RealTypeConverters.convert( ( RandomAccessibleInterval< ? extends RealType< ? > > ) dataset.getImgPlus().getImg(), new ByteType() );
-		Mat cvMat = ImgToMatConverter.toMat( image );
-		RandomAccessibleInterval< ByteType > cvImg = ( RandomAccessibleInterval< ByteType > ) MatToImgConverter.toImg( cvMat );
+		Mat cvMat = new ImgToMatConverter().convert( image, Mat.class );
+		RandomAccessibleInterval< ByteType > cvImg = ( RandomAccessibleInterval< ByteType > ) new MatToImgConverter().convert( cvMat, RandomAccessibleInterval.class );
 		saveImg( cvImg, fullCircleFromImg );
 
 		checkData( cvImg, image );

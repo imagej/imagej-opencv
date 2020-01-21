@@ -29,27 +29,12 @@ import net.imglib2.view.Views;
 public class StackedImageTest extends ConvertersTestBase {
 
 	@BeforeClass
-	public static void createTestImage() {
+	public static void init() {
+		
+		setup();
 
 		ArrayImg< UnsignedByteType, ByteArray > img = createLargeRectangularImage();
 		saveImg( img, input );
-	}
-
-	@Test
-	public void testMatAndImgArraysAreSameShape() throws IOException {
-
-		MatVector mats = new MatVector();
-		imreadmulti( input, mats );
-		if ( mats.empty() )
-			throw new IOException( "Couldn't load image: " + input );
-		ImageJ ij = new ImageJ();
-		Dataset dataset = ij.get( DatasetIOService.class ).open( input );
-		RandomAccessibleInterval< ByteType > image =
-				RealTypeConverters.convert( ( RandomAccessibleInterval< ? extends RealType< ? > > ) dataset.getImgPlus().getImg(), new ByteType() );
-		for ( int i = 0; i < 3; i++ ) {
-			checkData( Views.hyperSlice( image, 2, i ), mats.get( i ));
-		}
-
 	}
 
 	@SuppressWarnings( "unchecked" )
@@ -73,10 +58,10 @@ public class StackedImageTest extends ConvertersTestBase {
 
 	@SuppressWarnings( "unchecked" )
 	@Test
-	public void testFullCircleConversionFromMat() throws IOException {
+	public void testFullCircleConversionFromMatVector() throws IOException {
 
 		MatVector mats = new MatVector();
-		imreadmulti( input, mats );
+		imreadmulti( input, mats, opencv_imgcodecs.IMREAD_GRAYSCALE );
 		if ( mats.empty() )
 			throw new IOException( "Couldn't load image: " + input );
 		
@@ -92,9 +77,9 @@ public class StackedImageTest extends ConvertersTestBase {
 
 	@SuppressWarnings( "unchecked" )
 	@Test
-	public void testMatToImgComversion() throws IOException {
+	public void testMatVectorToImgComversion() throws IOException {
 		MatVector mats = new MatVector();
-		imreadmulti( input, mats );
+		imreadmulti( input, mats, opencv_imgcodecs.IMREAD_GRAYSCALE );
 		if ( mats.empty() )
 			throw new IOException( "Couldn't load image: " + input );
 		
@@ -109,13 +94,13 @@ public class StackedImageTest extends ConvertersTestBase {
 	}
 
 	@Test
-	public void testImgToMatConversion() throws IOException {
+	public void testImgToMatVectorConversion() throws IOException {
 		ImageJ ij = new ImageJ();
 		Dataset dataset = ij.get( DatasetIOService.class ).open( input );
 		RandomAccessibleInterval< ByteType > image =
 				RealTypeConverters.convert( ( RandomAccessibleInterval< ? extends RealType< ? > > ) dataset.getImgPlus().getImg(), new ByteType() );
 		
-		MatVector cvImg = ( MatVector ) new ImgToMatVectorConverter().convert( image, MatVector.class );
+		MatVector cvImg = new ImgToMatVectorConverter().convert( image, MatVector.class );
 		
 		for ( int i = 0; i < 3; i++ ) {
 			opencv_imgcodecs.imwrite( TEST_DIR + File.separator + "img2mvSlice" + i + ".tif", cvImg.get( i ) );

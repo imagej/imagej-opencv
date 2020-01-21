@@ -32,8 +32,10 @@ public class FloatImageConvertersTest extends ConvertersTestBase {
 	private static ArrayImg< FloatType, FloatArray > inputImg;
 
 	@BeforeClass
-	public static void createTestImage() {
+	public static void init() {
 
+		setup();
+		
 		inputImg = createLargeRectangularImage();
 		saveImg( inputImg, input );
 	}
@@ -43,7 +45,7 @@ public class FloatImageConvertersTest extends ConvertersTestBase {
 	public void testImgToMatConversion() throws IOException {
 		//Read image with ImageJ and convert to openCV
 		Dataset dataset = getScifio().datasetIO().open( input );
-		Mat convertedImg = ImgToMatConverter.toMat( ( RandomAccessibleInterval< FloatType > ) dataset.getImgPlus().getImg() );
+		Mat convertedImg = new ImgToMatConverter().convert( ( RandomAccessibleInterval< FloatType > ) dataset.getImgPlus().getImg(), Mat.class);
 		opencv_imgcodecs.imwrite( img2mat, convertedImg );
 
 		//Compare data
@@ -57,8 +59,8 @@ public class FloatImageConvertersTest extends ConvertersTestBase {
 		Dataset dataset = getScifio().datasetIO().open( input );
 		RandomAccessibleInterval< FloatType > image =
 				RealTypeConverters.convert( ( RandomAccessibleInterval< ? extends RealType< ? > > ) dataset.getImgPlus().getImg(), new FloatType() );
-		Mat cvMat = ImgToMatConverter.toMat( image );
-		RandomAccessibleInterval< FloatType > cvImg = ( RandomAccessibleInterval< FloatType > ) MatToImgConverter.toImg( cvMat );
+		Mat cvMat = new ImgToMatConverter().convert( image, Mat.class );
+		RandomAccessibleInterval< FloatType > cvImg = new MatToImgConverter().convert( cvMat, RandomAccessibleInterval.class );
 		saveImg( cvImg, fullCircleFromImg );
 
 		checkData( cvImg, inputImg );

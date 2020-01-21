@@ -32,8 +32,10 @@ public class DoubleImageConvertersTest extends ConvertersTestBase {
 	private static ArrayImg< DoubleType, DoubleArray > inputImg;
 
 	@BeforeClass
-	public static void createTestImage() {
+	public static void init() {
 
+		setup ();
+		
 		inputImg = createLargeRectangularImage();
 		saveImg( inputImg, input );
 	}
@@ -43,7 +45,7 @@ public class DoubleImageConvertersTest extends ConvertersTestBase {
 	public void testImgToMatConversion() throws IOException {
 		//Read image with ImageJ and convert to openCV
 		Dataset dataset = getScifio().datasetIO().open( input );
-		Mat convertedImg = ImgToMatConverter.toMat( ( RandomAccessibleInterval< DoubleType > ) dataset.getImgPlus().getImg() );
+		Mat convertedImg = new ImgToMatConverter().convert( ( RandomAccessibleInterval< DoubleType > ) dataset.getImgPlus().getImg(), Mat.class );
 		opencv_imgcodecs.imwrite( img2mat, convertedImg );
 
 		//Compare data
@@ -57,8 +59,8 @@ public class DoubleImageConvertersTest extends ConvertersTestBase {
 		Dataset dataset = getScifio().datasetIO().open( input );
 		RandomAccessibleInterval< DoubleType > image =
 				RealTypeConverters.convert( ( RandomAccessibleInterval< ? extends RealType< ? > > ) dataset.getImgPlus().getImg(), new DoubleType() );
-		Mat cvMat = ImgToMatConverter.toMat( image );
-		RandomAccessibleInterval< DoubleType > cvImg = ( RandomAccessibleInterval< DoubleType > ) MatToImgConverter.toImg( cvMat );
+		Mat cvMat = new ImgToMatConverter().convert( image, Mat.class );
+		RandomAccessibleInterval< DoubleType > cvImg = ( RandomAccessibleInterval< DoubleType > ) MatToImgConverter.convert( cvMat );
 		saveImg( cvImg, fullCircleFromImg );
 
 		checkData( cvImg, inputImg );

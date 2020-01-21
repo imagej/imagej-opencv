@@ -48,9 +48,10 @@ public class ImgToMatVectorConverter extends AbstractConverter< RandomAccessible
 			throw new IllegalArgumentException( "Images with less than 3 dimensions are not supported here, use ImgToMatConverter" );
 		MatVector matVector = new MatVector( dims[ 2 ] );
 		ImgToMatConverter converter = new ImgToMatConverter();
-		for ( int i = 1; i <= dims[ 2 ]; i++ ) {
-			RandomAccessibleInterval< T > ijSlice = Views.hyperSlice( img, dims[ 2 ]-1, i - 1 );
-			matVector.put( i - 1, converter.convert( ijSlice, Mat.class ) );
+		for ( int i = 0; i < dims[2]; i++ ) {
+			RandomAccessibleInterval< T > ijSlice = Views.hyperSlice( img, dims[2]-1, i);
+			Mat mSlice = converter.convert( ijSlice, Mat.class );
+			matVector.put( i , mSlice);
 		}
 		return ( T ) matVector;
 	}
