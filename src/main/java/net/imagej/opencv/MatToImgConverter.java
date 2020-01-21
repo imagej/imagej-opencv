@@ -94,8 +94,7 @@ public class MatToImgConverter extends AbstractConverter< Mat, Img > {
 	 * an
 	 * OpenCV Mat matrix with the data type {@link CvType#CV_8UC1}.
 	 * 
-	 * @param matrix
-	 *            Mat.
+	 * @param mat input Mat object
 	 * @return An image containing the data of the Mat.
 	 */
 	public static RandomAccessibleInterval< UnsignedByteType > toUnsignedByteImg( final Mat mat ) {
@@ -111,8 +110,7 @@ public class MatToImgConverter extends AbstractConverter< Mat, Img > {
 	 * Creates an image of type {@link ByteType} containing the data of an
 	 * OpenCV Mat matrix with the data type {@link CvType#CV_8SC1}.
 	 * 
-	 * @param matrix
-	 *            Mat.
+	 * @param mat input Mat object
 	 * @return An image containing the data of the Mat.
 	 */
 	public static RandomAccessibleInterval< ByteType > toByteImg( final Mat mat ) {
@@ -128,8 +126,7 @@ public class MatToImgConverter extends AbstractConverter< Mat, Img > {
 	 * Creates an image of type {@link IntType} containing the data of an
 	 * OpenCV Mat matrix with the data type {@link CvType#CV_32SC1}.
 	 * 
-	 * @param matrix
-	 *            Mat.
+	 * @param mat input Mat object
 	 * @return An image containing the data of the Mat.
 	 */
 	public static RandomAccessibleInterval< IntType > toIntImg( final Mat mat ) {
@@ -145,8 +142,7 @@ public class MatToImgConverter extends AbstractConverter< Mat, Img > {
 	 * Creates an image of type {@link FloatType} containing the data of an
 	 * OpenCV Mat matrix with the data type {@link CvType#CV_32FC1}.
 	 * 
-	 * @param matrix
-	 *            Mat.
+	 * @param mat input Mat object
 	 * @return An image containing the data of the Mat.
 	 */
 	public static RandomAccessibleInterval< FloatType > toFloatImg( final Mat mat ) {
@@ -162,8 +158,7 @@ public class MatToImgConverter extends AbstractConverter< Mat, Img > {
 	 * Creates an image of type {@link DoubleType} containing the data of a
 	 * OpenCV Mat matrix with the data type {@link CvType#CV_64FC1}.
 	 * 
-	 * @param matrix
-	 *            Mat.
+	 * @param mat input Mat object
 	 * @return An image containing the data of the Mat.
 	 */
 	public static RandomAccessibleInterval< DoubleType > toDoubleImg( Mat mat ) {

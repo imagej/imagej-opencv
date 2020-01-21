@@ -69,13 +69,7 @@ public class ImgToMatConverter extends AbstractConverter< RandomAccessibleInterv
 
 	/**
 	 * Creates am OpenCV Mat matrix containing data from the given image.
-	 * 
-	 * @param <T>
-	 * 
-	 * @param image
-	 *            The image which should be put into the mat.
-	 * @return A mat containing the data of the image.
-	 * @throws IllegalArgumentException
+	 * throws IllegalArgumentException
 	 *             if the type of the image is not supported.
 	 *             Supported types are {@link ByteType}, {@link DoubleType},
 	 *             {@link FloatType} and {@link IntType}
