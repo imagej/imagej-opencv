@@ -18,3 +18,4 @@
 .project
 .classpath
 /.settings/
+/test/

@@ -9,6 +9,7 @@ import java.io.IOException;
 import org.bytedeco.opencv.global.opencv_imgcodecs;
 import org.bytedeco.opencv.opencv_core.Mat;
 import org.bytedeco.opencv.opencv_core.MatVector;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -114,7 +115,7 @@ public class StackedImageTest extends ConvertersTestBase {
 		final byte[] imgData = ImgToMatConverter.toByteArray( img );
 
 		assertEquals( matData.length, imgData.length );
-		org.junit.Assert.assertArrayEquals( matData, imgData );
+		Assert.assertArrayEquals( matData, imgData );
 	}
 
 	private void checkData( RandomAccessibleInterval< ByteType > img1, RandomAccessibleInterval< ByteType > img2 ) {
@@ -122,7 +123,7 @@ public class StackedImageTest extends ConvertersTestBase {
 		final byte[] imgData2 = ImgToMatConverter.toByteArray( img2 );
 
 		assertEquals( imgData1.length, imgData2.length );
-		org.junit.Assert.assertArrayEquals( imgData1, imgData2 );
+		Assert.assertArrayEquals( imgData1, imgData2 );
 	}
 
 	/**

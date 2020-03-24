@@ -49,7 +49,7 @@ public class ImgToMatVectorConverter extends AbstractConverter< RandomAccessible
 		MatVector matVector = new MatVector( dims[ 2 ] );
 		ImgToMatConverter converter = new ImgToMatConverter();
 		for ( int i = 0; i < dims[2]; i++ ) {
-			RandomAccessibleInterval< T > ijSlice = Views.hyperSlice( img, dims[2]-1, i);
+			RandomAccessibleInterval< T > ijSlice = Views.hyperSlice( img, dims.length - 1, i);
 			Mat mSlice = converter.convert( ijSlice, Mat.class );
 			matVector.put( i , mSlice);
 		}
