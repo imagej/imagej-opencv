@@ -4,7 +4,7 @@ This library provides converters between
 [ImgLib2](https://github.com/imglib/imglib2) and
 [OpenCV](https://github.com/opencv/opencv) data structures.
 
-It requires the OpenCV 4.2.0_1 C libraries to be locally installed.
+This implementation supports the OpenCV version 4.1.2
 
 It requires Java 1.8 at a minimum
 
