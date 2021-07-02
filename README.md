@@ -1,4 +1,4 @@
-[![](https://travis-ci.com/imagej/imagej-opencv.svg?branch=master)](https://travis-ci.com/imagej/imagej-opencv)
+[![](https://github.com/imagej/imagej-opencv/actions/workflows/build-main.yml/badge.svg)](https://github.com/imagej/imagej-opencv/actions/workflows/build-main.yml)
 
 This library provides converters between
 [ImgLib2](https://github.com/imglib/imglib2) and
