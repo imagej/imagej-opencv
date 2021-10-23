@@ -82,16 +82,8 @@
 
 	<repositories>
 		<repository>
-			<id>ossrh</id>
-			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
-		</repository>
-		<repository>
-			<id>dais-imagej-public</id>
-			<url>https://dais-maven.mpi-cbg.de/repository/imagej-public/</url>
-		</repository>
-		<repository>
-			<id>imagej-public</id>
-			<url>https://maven.imagej.net/content/groups/public/</url>
+			<id>scijava.public</id>
+			<url>https://maven.scijava.org/content/groups/public</url>
 		</repository>
 	</repositories>
 
