@@ -78,6 +78,7 @@
 		<license.copyrightOwners>Max Planck Institute of Molecular Cell
 			Biology and Genetics</license.copyrightOwners>
 		<releaseProfiles>sign,deploy-to-scijava</releaseProfiles>
+		<opencv-platform.version>4.1.2-1.5.2</opencv-platform.version>
 	</properties>
 
 	<repositories>
@@ -101,7 +102,7 @@
 		<dependency>
 			<groupId>org.bytedeco</groupId>
 			<artifactId>opencv-platform</artifactId>
-			<version>4.1.2-1.5.2</version>
+			<version>${opencv-platform.version}</version>
 		</dependency>
 
 		<!-- Test scope dependencies -->
