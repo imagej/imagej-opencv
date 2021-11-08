@@ -57,7 +57,7 @@
 	</mailingLists>
 
 	<scm>
-		<connection>scm:git:git://github.com/imagej/imagej-opencv</connection>
+		<connection>scm:git:https://github.com/imagej/imagej-opencv</connection>
 		<developerConnection>scm:git:git@github.com:imagej/imagej-opencv</developerConnection>
 		<tag>HEAD</tag>
 		<url>https://github.com/imagej/imagej-opencv</url>
