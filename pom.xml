@@ -29,23 +29,20 @@
 
 	<developers>
 		<developer>
-			<id>turekg</id>
-			<name>Gabriella Turek</name>
-			<url>https://github.com/turekg</url>
+			<id>ctrueden</id>
+			<name>Curtis Rueden</name>
+			<url>https://imagej.net/people/ctrueden</url>
 			<roles>
-				<role>founder</role>
-				<role>lead</role>
-				<role>developer</role>
-				<role>debugger</role>
-				<role>reviewer</role>
-				<role>support</role>
 				<role>maintainer</role>
 			</roles>
 		</developer>
 	</developers>
 	<contributors>
 		<contributor>
-			<name>none</name>
+			<name>Gabriella Turek</name>
+			<url>https://imagej.net/people/turekg</url>
+			<properties><id>turekg</id></properties>
+			<roles><role>founder</role></roles>
 		</contributor>
 	</contributors>
 
