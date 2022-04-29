@@ -37,13 +37,15 @@ import java.io.IOException;
 import org.bytedeco.opencv.global.opencv_imgcodecs;
 import org.bytedeco.opencv.opencv_core.Mat;
 import org.bytedeco.opencv.opencv_core.MatVector;
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.scijava.Context;
 
 import io.scif.services.DatasetIOService;
 import net.imagej.Dataset;
-import net.imagej.ImageJ;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.converter.RealTypeConverters;
 import net.imglib2.img.array.ArrayImg;
@@ -59,19 +61,28 @@ public class StackedImageTest extends ConvertersTestBase {
 
 	@BeforeClass
 	public static void init() {
-		
 		setup();
 
 		ArrayImg< UnsignedByteType, ByteArray > img = createLargeRectangularImage();
 		saveImg( img, input );
 	}
 
+	private Context ctx;
+
+	@Before
+	public void setUp() {
+		ctx = new Context();
+	}
+
+	@After
+	public void tearDown() {
+		ctx.dispose();
+	}
+
 	@SuppressWarnings( "unchecked" )
 	@Test
 	public void testFullCircleConversionFromIJ() throws IOException {
-
-		ImageJ ij = new ImageJ();
-		Dataset dataset = ij.get( DatasetIOService.class ).open( input );
+		Dataset dataset = ctx.service( DatasetIOService.class ).open( input );
 		RandomAccessibleInterval< ByteType > image =
 				RealTypeConverters.convert( ( RandomAccessibleInterval< ? extends RealType< ? > > ) dataset.getImgPlus().getImg(), new ByteType() );
 		
@@ -124,8 +135,7 @@ public class StackedImageTest extends ConvertersTestBase {
 
 	@Test
 	public void testImgToMatVectorConversion() throws IOException {
-		ImageJ ij = new ImageJ();
-		Dataset dataset = ij.get( DatasetIOService.class ).open( input );
+		Dataset dataset = ctx.service( DatasetIOService.class ).open( input );
 		RandomAccessibleInterval< ByteType > image =
 				RealTypeConverters.convert( ( RandomAccessibleInterval< ? extends RealType< ? > > ) dataset.getImgPlus().getImg(), new ByteType() );
 		

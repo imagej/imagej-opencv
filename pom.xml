@@ -74,30 +74,59 @@
 		<license.projectName>ImageJ/OpenCV Integration</license.projectName>
 		<license.copyrightOwners>ImageJ2 developers.</license.copyrightOwners>
 		<releaseProfiles>sign,deploy-to-scijava</releaseProfiles>
-		<opencv-platform.version>4.1.2-1.5.2</opencv-platform.version>
+
+		<opencv.version>4.1.2-1.5.2</opencv.version>
+		<opencv-platform.version>${opencv.version}</opencv-platform.version>
+		<javacpp.version>1.5.2</javacpp.version>
 	</properties>
 
 	<dependencies>
 		<dependency>
-			<groupId>net.imagej</groupId>
-			<artifactId>imagej</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>net.imglib2</groupId>
 			<artifactId>imglib2</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.scijava</groupId>
+			<artifactId>scijava-common</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.bytedeco</groupId>
+			<artifactId>opencv</artifactId>
+			<version>${opencv.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.bytedeco</groupId>
+			<artifactId>javacpp</artifactId>
+			<version>${javacpp.version}</version>
+		</dependency>
 
-		<!-- Dependency for OpenCV Optical Flow implementation -->
+		<!-- Runtime dependencies -->
 		<dependency>
 			<groupId>org.bytedeco</groupId>
 			<artifactId>opencv-platform</artifactId>
 			<version>${opencv-platform.version}</version>
+			<scope>runtime</scope>
 		</dependency>
 
 		<!-- Test scope dependencies -->
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>net.imagej</groupId>
+			<artifactId>imagej-common</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.scif</groupId>
+			<artifactId>scifio</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

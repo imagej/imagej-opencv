@@ -46,13 +46,15 @@ import org.bytedeco.opencv.opencv_core.Mat;
 import org.bytedeco.opencv.opencv_core.MatVector;
 import org.bytedeco.opencv.opencv_video.DenseOpticalFlow;
 import org.bytedeco.opencv.opencv_video.FarnebackOpticalFlow;
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.scijava.Context;
 
 import io.scif.services.DatasetIOService;
 import net.imagej.Dataset;
-import net.imagej.ImageJ;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.converter.RealTypeConverters;
 import net.imglib2.type.numeric.RealType;
@@ -63,21 +65,20 @@ import net.imglib2.view.Views;
 
 public class RealStackedImageTest extends ConvertersTestBase {
 
-	private final static int numLevels = 1;
-	private final static double pyrScale = 0.5;
-	private final boolean fastPyramids = false;
-	private final static int winSize = 5;
-	private final static int numIters = 2;
-	private final static int polyN = 5;
-	private final static double polySigma = 1.1;
-	private final static int flags = 0;
+	private static final int numLevels = 1;
+	private static final double pyrScale = 0.5;
+	private static final boolean fastPyramids = false;
+	private static final int winSize = 5;
+	private static final int numIters = 2;
+	private static final int polyN = 5;
+	private static final double polySigma = 1.1;
+	private static final int flags = 0;
 
 	private static final String TEST_DIR = System.getProperty( "user.dir" ) + File.separator + "test";
-	private final static String input = "testdata/teststack.tif";
+	private static final String input = "testdata/teststack.tif";
 
 	@BeforeClass
-	public static void setup() {
-
+	public static void init() {
 		File testDir = new File( TEST_DIR );
 
 		try {
@@ -91,12 +92,22 @@ public class RealStackedImageTest extends ConvertersTestBase {
 		}
 	}
 
+	private Context ctx;
+
+	@Before
+	public void setUp() {
+		ctx = new Context();
+	}
+
+	@After
+	public void tearDown() {
+		ctx.dispose();
+	}
+
 	@SuppressWarnings( "unchecked" )
 	@Test
 	public void testFullCircleConversionFromIJ() throws IOException {
-
-		ImageJ ij = new ImageJ();
-		Dataset dataset = ij.get( DatasetIOService.class ).open( input );
+		Dataset dataset = ctx.service( DatasetIOService.class ).open( input );
 		RandomAccessibleInterval< ByteType > image =
 				RealTypeConverters.convert( ( RandomAccessibleInterval< ? extends RealType< ? > > ) dataset.getImgPlus().getImg(), new ByteType() );
 		
@@ -149,8 +160,7 @@ public class RealStackedImageTest extends ConvertersTestBase {
 
 	@Test
 	public void testImgToMatVectorConversion() throws IOException {
-		ImageJ ij = new ImageJ();
-		Dataset dataset = ij.get( DatasetIOService.class ).open( input );
+		Dataset dataset = ctx.service( DatasetIOService.class ).open( input );
 		RandomAccessibleInterval< ByteType > image =
 				RealTypeConverters.convert( ( RandomAccessibleInterval< ? extends RealType< ? > > ) dataset.getImgPlus().getImg(), new ByteType() );
 		
@@ -167,7 +177,7 @@ public class RealStackedImageTest extends ConvertersTestBase {
 	@Test
 	public void computeFernbackOpticalFlowTest() throws IOException {
 
-		Dataset dataset = new ImageJ().get( DatasetIOService.class ).open( input );
+		Dataset dataset = ctx.service( DatasetIOService.class ).open( input );
 		RandomAccessibleInterval< ByteType > image =
 				RealTypeConverters.convert( ( RandomAccessibleInterval< ? extends RealType< ? > > ) dataset.getImgPlus().getImg(), new ByteType() );
 		int[] dims = Intervals.dimensionsAsIntArray( image );
