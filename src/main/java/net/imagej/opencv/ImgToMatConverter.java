@@ -28,10 +28,8 @@
  */
 package net.imagej.opencv;
 
-import org.bytedeco.javacpp.BytePointer;
-import org.bytedeco.javacpp.DoublePointer;
-import org.bytedeco.javacpp.FloatPointer;
-import org.bytedeco.javacpp.IntPointer;
+import net.imglib2.type.numeric.integer.*;
+import org.bytedeco.javacpp.*;
 import org.bytedeco.opencv.opencv_core.Mat;
 import org.opencv.core.CvType;
 import org.scijava.Prioritized;
@@ -45,9 +43,6 @@ import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.array.ArrayImgs;
 import net.imglib2.loops.LoopBuilder;
 import net.imglib2.type.Type;
-import net.imglib2.type.numeric.integer.ByteType;
-import net.imglib2.type.numeric.integer.IntType;
-import net.imglib2.type.numeric.integer.UnsignedByteType;
 import net.imglib2.type.numeric.real.DoubleType;
 import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.util.Intervals;
@@ -113,6 +108,8 @@ public class ImgToMatConverter extends AbstractConverter< RandomAccessibleInterv
 
 		}
 		if ( type instanceof ByteType ) { return getByteMat( ( RandomAccessibleInterval< ByteType > ) image ); }
+		if ( type instanceof UnsignedShortType) { return getUnsignedShortMat( ( RandomAccessibleInterval<UnsignedShortType> ) image ); }
+		if ( type instanceof ShortType ) { return getShortMat( ( RandomAccessibleInterval<ShortType> ) image ); }
 		if ( type instanceof IntType ) { return getIntMat( ( RandomAccessibleInterval< IntType > ) image ); }
 		if ( type instanceof FloatType ) { return getFloatMat( ( RandomAccessibleInterval< FloatType > ) image ); }
 		if ( type instanceof DoubleType ) { return getDoubleMat( ( RandomAccessibleInterval< DoubleType > ) image ); }
@@ -187,6 +184,47 @@ public class ImgToMatConverter extends AbstractConverter< RandomAccessibleInterv
 	}
 
 	/**
+	 * Creates an OpenCV Mat matrix containing data from the given short image.
+	 *
+	 * @param image
+	 *            The image which should be put into the Mat.
+	 * @return A Mat containing the data of the image.
+	 */
+	public static Mat getShortMat(
+			final RandomAccessibleInterval< ShortType > image ) {
+		int[] shape = Intervals.dimensionsAsIntArray( image );
+		short[] data = toShortArray( image );
+		return createShortMat( shape, CvType.CV_16SC1, data );
+	}
+
+	/**
+	 * Creates an OpenCV Mat matrix containing data from the given unsigned short
+	 * image.
+	 *
+	 * @param image
+	 *            The image which should be put into the Mat.
+	 * @return A Mat containing the data of the image.
+	 */
+	public static Mat getUnsignedShortMat(
+			final RandomAccessibleInterval< UnsignedShortType > image ) {
+		int[] shape = Intervals.dimensionsAsIntArray( image );
+		short[] data = toUShortArray( image );
+		return createShortMat( shape, CvType.CV_16UC1, data );
+	}
+
+	private static Mat createShortMat( final int[] shape, final int cvType, final short[] data ) {
+		// We need to invert X and Y in order to get the right orientation.
+		if ( shape.length == 2 ) {
+			return new Mat( shape[ 1 ], shape[ 0 ], cvType, new ShortPointer( data ) );
+		} else {
+			int[] reshape = shape.clone();
+			reshape[ 0 ] = shape[ 1 ];
+			reshape[ 1 ] = shape[ 0 ];
+			return new Mat( reshape.length, reshape, cvType, new ShortPointer( data ) );
+		}
+	}
+
+	/**
 	 * Creates an OpenCV Mat matrix containing data from the given float image.
 	 * 
 	 * @param image
@@ -249,6 +287,20 @@ public class ImgToMatConverter extends AbstractConverter< RandomAccessibleInterv
 		byte[] outputArray = new byte[ ( int ) Intervals.numElements( image ) ];
 		long[] shape = Intervals.dimensionsAsLongArray( image );
 		copyFromTo( image, ArrayImgs.bytes( outputArray, shape ) );
+		return outputArray;
+	}
+
+	public static short[] toUShortArray( RandomAccessibleInterval< UnsignedShortType > image ) {
+		short[] outputArray = new short[ ( int ) Intervals.numElements( image ) ];
+		long[] shape = Intervals.dimensionsAsLongArray( image );
+		copyFromTo( image, ArrayImgs.unsignedShorts( outputArray, shape ) );
+		return outputArray;
+	}
+
+	public static short[] toShortArray( RandomAccessibleInterval< ShortType > image ) {
+		short[] outputArray = new short[ ( int ) Intervals.numElements( image ) ];
+		long[] shape = Intervals.dimensionsAsLongArray( image );
+		copyFromTo( image, ArrayImgs.shorts( outputArray, shape ) );
 		return outputArray;
 	}
 
